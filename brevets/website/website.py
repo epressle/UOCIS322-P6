@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import requests
 import os
+import json
 
 app = Flask(__name__)
 
@@ -19,20 +20,14 @@ def listEntries():
         k = '0'
 
     app.logger.debug("k = " + k)
-
     output = request.form.get('types')
-
+    if output is None:
+        output = 'json'
     app.logger.debug("output = " + str(output))
-
     data = requests.get("http://" + os.environ['BACKEND_ADDR'] + ":" + os.environ['BACKEND_PORT'] + "/" + out + "/" + output + "?top=" + k)
-
     app.logger.debug(data.text)
-
-    return jsonify({"data": data.text})
-
-
-
-
+    ret = data.text
+    return jsonify(ret)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

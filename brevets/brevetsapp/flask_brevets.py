@@ -12,6 +12,7 @@ import config
 import logging
 from pymongo import MongoClient
 import os
+import json
 
 ###
 # Globals
@@ -30,10 +31,10 @@ def insert_to_db(proc):
 def insert_items(items, num_items):
     # initialize a dictionary, set brev_distance once
     to_insert = {}
-    to_insert['brev_distance'] = items['data[dist]']
-    to_insert['open_times'] = []
-    to_insert['close_times'] = []
-    to_insert['kms'] = []
+    to_insert["brev_distance"] = items['data[dist]']
+    to_insert["open_times"] = []
+    to_insert["close_times"] = []
+    to_insert["kms"] = []
     # setting these to -inf as a placeholder
     currentKm = float('-inf')
     km_test = float('-inf')
@@ -41,15 +42,15 @@ def insert_items(items, num_items):
     for i in range(num_items):
         # if km is blank, don't add the entry
         if items['data[data][' + str(i) + '][km]'] != '':
-            to_insert['open_times'].append(items['data[data][' + str(i) + '][open_time]'])
-            to_insert['close_times'].append(items['data[data][' + str(i) + '][close_time]'])
+            to_insert["open_times"].append(items['data[data][' + str(i) + '][open_time]'])
+            to_insert["close_times"].append(items['data[data][' + str(i) + '][close_time]'])
             km_test = float(items['data[data][' + str(i) + '][km]'])
             if km_test < 0:
                 raise ValueError("Negative distances are not accepted!")
             if km_test <= currentKm:
                 raise ValueError("Control checkpoints are not ordered!")
             currentKm = km_test
-            to_insert['kms'].append(items['data[data][' + str(i) + '][km]'])
+            to_insert["kms"].append(items['data[data][' + str(i) + '][km]'])
 
     app.logger.debug(to_insert)
     insert_to_db(to_insert)

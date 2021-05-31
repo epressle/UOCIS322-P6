@@ -10,8 +10,17 @@ api = Api(app)
 client = MongoClient('mongodb://' + os.environ['MONGODB_HOSTNAME'], 27017)
 db = client.brevetdb
 
-def convert_to_csv(data):
-    return data
+def csv_convert(data, out):
+    str = ""
+    app.logger.debug(type(data))
+    if out == 'open':
+        str += "open_times\n"
+    elif out == 'close':
+        str += "close_times\n"
+    else:
+        str += "open_times,close_times\n"
+    return str
+
 
 def get_data(type_arg='all'):
     if type_arg == 'close':
@@ -20,34 +29,32 @@ def get_data(type_arg='all'):
         entries = db.brevetdb.find({}, {'_id': 0, 'brev_distance': 0, 'close_times': 0, 'kms': 0})
     else:
         entries = db.brevetdb.find({}, {'_id': 0, 'brev_distance': 0, 'kms': 0})
-    app.logger.debug("entries = " + str(list(entries)))
-    return list(entries)
+    entries = str(list(entries))
+    app.logger.debug("entries in get_data = " + entries)
+    return entries
 
 
 class ListAll(Resource):
     def get(self, ext='json'):
         entries = get_data('all')
-        print(entries)
         if ext == 'csv':
-            return convert_to_csv(entries)
+            return csv_convert(entries, 'all')
         else:
             return entries
 
 class ListOpenOnly(Resource):
     def get(self, ext='json'):
         entries = get_data('open')
-        print(entries)
         if ext == 'csv':
-            return convert_to_csv(entries)
+            return csv_convert(entries, 'open')
         else:
             return entries
 
 class ListCloseOnly(Resource):
     def get(self, ext='json'):
         entries = get_data('close')
-        print(entries)
         if ext == 'csv':
-            return convert_to_csv(entries)
+            return csv_convert(entries, 'close')
         else:
             return entries
 

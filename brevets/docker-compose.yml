@@ -21,7 +21,7 @@ services:
         build: website/
         command: python -u website.py
         ports:
-            - "6363:80"
+            - "6363:5000"
         depends_on:
             - restapi
         environment:
