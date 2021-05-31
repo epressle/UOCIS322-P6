@@ -1,3 +1,5 @@
-# brevetsapp #
+# brevets #
 
-This will contain everything from Project 5, except the test cases: `templates/`, `static/`, `flask_brevets.py`, `acp_times.py`, `requirements.txt`, `Dockerfile`.
+Copy your code from the previous project, use `DockerMongo` as an example, make the necessary changes to **this** directory, remove `DockerMongo`, and push! 
+
+**MAKE SURE TO USE THE SOLUTION `acp_times.py` from Canvas for this project!**
