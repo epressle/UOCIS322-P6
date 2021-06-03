@@ -15,19 +15,29 @@ def listEntries():
     out = request.form.get('out')
     app.logger.debug("Out = " + str(out))
     k = request.form.get('number')
+    if k is not None:
+        k = k.replace(" ", "")
 
-    if k is None or int(k) < 0:
+    if k is None or k == '' or not k.isdigit() or int(k) < 0:
         k = '0'
+    
+    if out is None or out == '':
+        out = 'listAll'
 
-    app.logger.debug("k = " + k)
     output = request.form.get('types')
     if output is None:
         output = 'json'
     app.logger.debug("output = " + str(output))
     data = requests.get("http://" + os.environ['BACKEND_ADDR'] + ":" + os.environ['BACKEND_PORT'] + "/" + out + "/" + output + "?top=" + k)
     app.logger.debug(data.text)
-    ret = data.text
-    return jsonify(ret)
+    if output == 'json':
+        ret = data.text
+        ret = ret[2:]
+        ret = ret[:-3]
+        ret = ret.replace('"', "")
+        new_ret = "[" + ret + "]" 
+        return jsonify(new_ret)
+    return ret
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

@@ -12,7 +12,7 @@ db = client.brevetdb
 
 def csv_convert(data, out):
     str = ""
-    app.logger.debug(type(data))
+    app.logger.debug(data)
     if out == 'open':
         str += "open_times\n"
     elif out == 'close':
@@ -23,12 +23,15 @@ def csv_convert(data, out):
 
 
 def get_data(type_arg='all'):
+    num = request.args.get('top', type=int)
+    if num is None or num <= 0:
+        return ""
     if type_arg == 'close':
-        entries = db.brevetdb.find({}, {'_id': 0, 'brev_distance': 0, 'open_times': 0, 'kms': 0})
+        entries = db.brevetdb.find({}, {'_id': 0, 'brev_distance': 0, 'open_times': 0, 'kms': 0}).limit(num)
     elif type_arg == 'open':
-        entries = db.brevetdb.find({}, {'_id': 0, 'brev_distance': 0, 'close_times': 0, 'kms': 0})
+        entries = db.brevetdb.find({}, {'_id': 0, 'brev_distance': 0, 'close_times': 0, 'kms': 0}).limit(num)
     else:
-        entries = db.brevetdb.find({}, {'_id': 0, 'brev_distance': 0, 'kms': 0})
+        entries = db.brevetdb.find({}, {'_id': 0, 'brev_distance': 0, 'kms': 0}).limit(num)
     entries = str(list(entries))
     app.logger.debug("entries in get_data = " + entries)
     return entries
