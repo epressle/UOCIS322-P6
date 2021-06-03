@@ -6,4 +6,6 @@ This project is intended to add an API to the brevet calculator that has been wo
 By filling out the form in the consumer program, you can get a JSON formatted file and a CSV formatted file returned with the information you choose.
 Otherwise, the project is the same as previous and functions identically.
 ## NOTES ##
-This project is missing CSV still, but the top K values works.
+An invalid value for the top K values (negative, alphabetical) will return empty. A value that is too high for the top K values will return all of the entries.  
+If the type of output (JSON, CSV) is (somehow) incorrectly set, the API will default to JSON.  
+If none of the radio buttons are selected for types of output (listAll, listOpen, listClose), the API will default to listing all.

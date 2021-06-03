@@ -20,7 +20,7 @@ def listEntries():
 
     if k is None or k == '' or not k.isdigit() or int(k) < 0:
         k = '0'
-    
+
     if out is None or out == '':
         out = 'listAll'
 
@@ -35,9 +35,12 @@ def listEntries():
         ret = ret[2:]
         ret = ret[:-3]
         ret = ret.replace('"', "")
-        new_ret = "[" + ret + "]" 
+        new_ret = "[" + ret + "]"
         return jsonify(new_ret)
-    return ret
+    ret = data.text
+    ret = ret[1:]
+    ret = ret[:-2]
+    return jsonify(ret)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

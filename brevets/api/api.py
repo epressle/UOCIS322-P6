@@ -11,14 +11,69 @@ client = MongoClient('mongodb://' + os.environ['MONGODB_HOSTNAME'], 27017)
 db = client.brevetdb
 
 def csv_convert(data, out):
+    num = request.args.get('top', type=int)
+    if num is None or num <= 0:
+        return ""
     str = ""
-    app.logger.debug(data)
+    data = data[1:]
+    data = data[:-1]
+    app.logger.debug("data str = " + data)
+
+    data = data.replace('"', "")
+    data = data.replace("'", "")
+    data = data.replace(" ", "")
+    data = data.replace("{", "")
+    data = data.replace("}", "")
+
     if out == 'open':
         str += "open_times\n"
+        while data:
+            start_val = data.find("[")
+            end_val = data.find("]")
+            snippet = data[start_val + 1:end_val]
+            o_times = snippet.split(",")
+            for x in o_times:
+                str += x + "\n"
+            remove_str = 'open_times:[' + snippet + ']'
+            data = data.replace(remove_str + ",", "")
+            data = data.replace(remove_str, "")
     elif out == 'close':
         str += "close_times\n"
+        while data:
+            start_val = data.find("[")
+            end_val = data.find("]")
+            snippet = data[start_val + 1:end_val]
+            c_times = snippet.split(",")
+            for x in c_times:
+                str += x + "\n"
+            remove_str = 'close_times:[' + snippet + ']'
+            app.logger.debug('remove_str = ' + remove_str)
+            data = data.replace(remove_str + ",", "")
+            data = data.replace(remove_str, "")
     else:
+        remove_str = ""
         str += "open_times,close_times\n"
+        count = 0
+        while data:
+            app.logger.debug(data)
+            start_val = data.find("[")
+            end_val = data.find("]")
+            snippet = data[start_val + 1:end_val]
+            a_times = snippet.split(",")
+            for x in a_times:
+                str += x
+                if count % 2 == 0:
+                    str += " "
+                else:
+                    str += "\n"
+            if count % 2 == 0:
+                remove_str = 'open_times:[' + snippet + ']'
+            else:
+                remove_str = 'close_times:[' + snippet + ']'
+            app.logger.debug('remove_str = ' + remove_str)
+            data = data.replace(remove_str + ",", "")
+            data = data.replace(remove_str, "")
+            count += 1
     return str
 
 
